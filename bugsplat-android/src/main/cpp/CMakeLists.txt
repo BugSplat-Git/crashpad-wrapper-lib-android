@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.19.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-add_library(native-lib SHARED native-lib.cpp )
+add_library(bugsplat SHARED native-lib.cpp )
 
 # Crashpad Libraries
 add_library(crashpad_common SHARED STATIC IMPORTED)
@@ -44,7 +44,7 @@ find_library(log-lib log)
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries(native-lib
+target_link_libraries(bugsplat
         ${log-lib}
         crashpad_common
         crashpad_client
@@ -53,7 +53,7 @@ target_link_libraries(native-lib
         )
 
 # Disable optimizations for debugging
-target_compile_options(native-lib PRIVATE
+target_compile_options(bugsplat PRIVATE
         "$<$<CONFIG:RELEASE>:-O0>"
         "$<$<CONFIG:DEBUG>:-O0>"
         )
