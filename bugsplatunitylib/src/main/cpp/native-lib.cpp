@@ -22,7 +22,14 @@ Java_com_ninevastudios_bugsplatunitylib_BugSplatBridge_jniInitBugSplat(JNIEnv *e
     string libDir = env->GetStringUTFChars(lib_dir, nullptr);
 
     // Crashpad file paths
-    FilePath handler(libDir + "/libcrashpad_handler.so");
+//    FilePath trampoline(libDir + "/libcrashpad_handler_trampoline.so");
+//    FilePath handler(libDir + "/libcrashpad_handler.so");
+    string trampoline = libDir + "/libcrashpad_handler_trampoline.so";
+    string handler = libDir + "/libcrashpad_handler.so";
+
+    vector<string> environment;
+    environment.emplace_back("LD_LIBRARY_PATH=" + libDir);
+
     FilePath reportsDir(dataDir + "/crashpad");
     FilePath metricsDir(dataDir + "/crashpad");
 
@@ -58,8 +65,9 @@ Java_com_ninevastudios_bugsplatunitylib_BugSplatBridge_jniInitBugSplat(JNIEnv *e
     vector<FilePath> attachments;
     // Start Crashpad crash handler
     static auto *client = new CrashpadClient();
-    return client->StartHandlerAtCrash(handler, reportsDir, metricsDir, url, annotations,
-                                arguments, attachments);
+    bool result = client->StartHandlerWithLinkerAtCrash(trampoline, handler, true, &environment, reportsDir, metricsDir, url, annotations,
+                                arguments);
+    return result;
 }
 extern "C"
 JNIEXPORT void JNICALL
